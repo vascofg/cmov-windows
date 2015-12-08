@@ -122,5 +122,10 @@ namespace MasterDetailApp
                 DetailContentPresenter.ContentTransitions.Clear();
             }
         }
+
+        private void AppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }
     }
 }
