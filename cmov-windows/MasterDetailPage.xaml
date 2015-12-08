@@ -89,10 +89,15 @@
             <ColumnDefinition x:Name="DetailColumn" Width="*" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock
-            Text="My Items"
-            Margin="12,8,8,8"
-            Style="{ThemeResource TitleTextBlockStyle}" />
+        <CommandBar>
+            <AppBarButton x:Name="AppBarAddButton" Icon="Add" Label="Add" Click="AppBarButton_Click"/>
+            <CommandBar.Content>
+                <TextBlock
+                    Text="My portfolio"
+                    Margin="12,8,8,8"
+                    Style="{ThemeResource TitleTextBlockStyle}" />
+            </CommandBar.Content>
+        </CommandBar>
 
         <ListView
             x:Name="MasterListView"
