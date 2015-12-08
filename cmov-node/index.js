@@ -55,9 +55,21 @@ Glue.compose(manifest, options, function (err, server) {
     db.sequelize.sync({force: true}).then(function () {
         console.log('models synced');
 
+
         //var tripModel = server.plugins['hapi-sequelized'].db.sequelize.models.Trip;
         //
         //tripModel.addTrips(tripModel);
+
+        //var ticksArray = ['GOOG'];
+        //
+        //var getTicks = function (next) {
+        //
+        //    next(null, ticksArray);
+        //};
+        //
+        //var addTick = function
+        //
+        //server.method('add', add, {});
     });
 
     var routes = require('./routes/routes.js');
