@@ -55,7 +55,8 @@ Glue.compose(manifest, options, function (err, server) {
     db.sequelize.sync({force: true}).then(function () {
         console.log('models synced');
 
-
+        var handler = require('./handlers/handlers.js');
+        handler.saveSubModel(server.plugins['hapi-sequelized'].db.sequelize.models.Subscription);
         //var tripModel = server.plugins['hapi-sequelized'].db.sequelize.models.Trip;
         //
         //tripModel.addTrips(tripModel);
