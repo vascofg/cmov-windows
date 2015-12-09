@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -29,25 +30,33 @@ namespace MasterDetailApp
             this.InitializeComponent();
         }
 
+        public async Task Refresh()
+        {
+            var items = MasterListView.ItemsSource as ObservableCollection<StockViewModel>;
+            
+            items = new ObservableCollection<StockViewModel>();     
+
+            var itemsList = await StocksDataSource.GetAllItems();
+
+            for(int i=0;i<itemsList.Count;i++)
+            {
+                 items.Add(StockViewModel.FromStock(itemsList[i]));
+            }
+            
+            MasterListView.ItemsSource = items;
+        }
+
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
             var items = MasterListView.ItemsSource as ObservableCollection<StockViewModel>;
 
-            if (items == null)
-            {
-                items = new ObservableCollection<StockViewModel>();
-
-                var itemsList = await StocksDataSource.GetAllItems();
-
-                foreach (var item in itemsList)
-                {
-                    items.Add(StockViewModel.FromStock(item));
-                }
-
-                MasterListView.ItemsSource = items;
-            }
+            //refresh on all navigations
+            //if (items == null)
+            //{
+            await Refresh();
+            //}
 
             if (e.Parameter != null)
             {
@@ -123,9 +132,33 @@ namespace MasterDetailApp
             }
         }
 
-        private void AppBarButton_Click(object sender, RoutedEventArgs e)
+        private async void AppBarButton_Click(object sender, RoutedEventArgs e)
         {
-            
+            if (sender == AppBarAddButton)
+            {
+                Frame rootFrame = Window.Current.Content as Frame;
+                rootFrame.Navigate(typeof(AddStock));
+            }
+            else if(sender == AppBarRefreshButton)
+            {
+                await Refresh();
+            }
+        }
+
+        private async void MasterListView_Holding(object sender, HoldingRoutedEventArgs e)
+        {
+            var items = MasterListView.ItemsSource as ObservableCollection<StockViewModel>;
+            var item = (e.OriginalSource as ListViewItemPresenter).DataContext as StockViewModel;
+            await StocksDataSource.DeleteItemById(item.ItemId);
+            items.Remove(item);
+        }
+
+        private async void MasterListView_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            var items = MasterListView.ItemsSource as ObservableCollection<StockViewModel>;
+            var item = (e.OriginalSource as ListViewItemPresenter).DataContext as StockViewModel;
+            await StocksDataSource.DeleteItemById(item.ItemId);
+            items.Remove(item);
         }
     }
 }

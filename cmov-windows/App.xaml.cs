@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Windows.Networking.PushNotifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Diagnostics;
+using Windows.Storage;
+using System.Runtime.Serialization.Json;
+using MasterDetailApp.Data;
+using System.IO;
+using System.Collections.ObjectModel;
+using System.Runtime.Serialization;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -24,6 +22,7 @@ namespace MasterDetailApp
     /// </summary>
     sealed partial class App : Application
     {
+        public PushNotificationChannel channel;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -40,7 +39,7 @@ namespace MasterDetailApp
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected async override void OnLaunched(LaunchActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
 
@@ -54,6 +53,16 @@ namespace MasterDetailApp
                 rootFrame.Language = Windows.Globalization.ApplicationLanguages.Languages[0];
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
+                
+                // Create and set push notification channel
+                if (channel == null)
+                {
+                    channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+                    Debug.WriteLine("PushNotificationChannel: " + channel.Uri);
+                }
+                
+                // Initialize portfolio
+                await StocksDataSource.ReadFromFile();
 
                 if (rootFrame.Content == null)
                 {
@@ -85,7 +94,7 @@ namespace MasterDetailApp
         /// </summary>
         /// <param name="sender">The source of the suspend request.</param>
         /// <param name="e">Details about the suspend request.</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
+        private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             

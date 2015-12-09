@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="9296b303-e43c-4323-bc5f-6cb3e72b0054" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="1.0.2.0" />
+  <Identity Name="64597VascoGonalves.BoneStock" Publisher="CN=C7EF7E55-A320-40A4-8F41-D315948CC046" Version="1.1.0.0" />
   <mp:PhoneIdentity PhoneProductId="9296b303-e43c-4323-bc5f-6cb3e72b0054" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>XAML Master/Detail CS Sample</DisplayName>
-    <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
+    <DisplayName>BoneStock</DisplayName>
+    <PublisherDisplayName>Vasco Gonçalves</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>

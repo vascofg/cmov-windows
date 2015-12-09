@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.Web.Http;
 
@@ -12,11 +17,47 @@ namespace MasterDetailApp.Data
 {
     public class StocksDataSource
     {
-        private static ObservableCollection<Stock> _items = new ObservableCollection<Stock>()
+
+        private static string PORTFOLIO_FILENAME = "portfolio.dat";
+        
+        private static DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(ObservableCollection<Stock>));
+
+        private static ObservableCollection<Stock> _items = new ObservableCollection<Stock>();
+
+        public async static Task ReadFromFile()
         {
-            new Stock(0, "AAPL", "Apple computers!"),
-            new Stock(1, "GOOG", "Google inc.")
-        };
+            StorageFile portfolioFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(PORTFOLIO_FILENAME, CreationCollisionOption.OpenIfExists);
+
+            using (Stream stream = await portfolioFile.OpenStreamForReadAsync())
+            {
+                try
+                {
+                    _items = (ObservableCollection<Stock>)serializer.ReadObject(stream);
+                    foreach (Stock item in _items)
+                        Debug.WriteLine("Deserialized: " + item.Tick);
+                }
+                catch(SerializationException e)
+                {
+                    Debug.WriteLine("Failed deserializing portfolio: " + e.Message);
+                }
+            }
+        }
+
+        public async static Task WriteToFile()
+        {
+            StorageFile portfolioFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(PORTFOLIO_FILENAME, CreationCollisionOption.ReplaceExisting);
+            using (Stream stream = await portfolioFile.OpenStreamForWriteAsync())
+            {
+                try
+                {
+                    serializer.WriteObject(stream, _items);
+                }
+                catch (SerializationException)
+                {
+                    Debug.WriteLine("Failed serializing portfolio");
+                }
+            }
+        }
 
         public async static Task<IList<Stock>> GetAllItems()
         {
@@ -37,7 +78,13 @@ namespace MasterDetailApp.Data
                     String[] stockLines = responseDataString.Split('\n');
                     for(int i=0;i<_items.Count;i++)
                     {
-                        _items.ElementAt(i).Value = float.Parse(stockLines[i].Split(',').ElementAt(1));
+                        try {
+                            _items.ElementAt(i).Value = float.Parse(stockLines[i].Split(',').ElementAt(1));
+                        }
+                        catch (FormatException e)
+                        {
+                            new MessageDialog("Bad response for " + _items.ElementAt(i).Tick, "Error").ShowAsync();
+                        }
                     }
                 }
                else
@@ -55,7 +102,30 @@ namespace MasterDetailApp.Data
 
         public static Stock GetItemById(int id)
         {
-            return _items[id];
+            foreach (Stock item in _items)
+                if (item.Id == id)
+                    return item;
+            return null;
+        }
+
+        public async static Task DeleteItemById(int id)
+        {
+            _items.Remove(GetItemById(id));
+            await WriteToFile();
+        }
+
+        public async static Task Add(Stock stock)
+        {
+            _items.Add(stock);
+            await WriteToFile();
+        }
+
+        public static int nextId()
+        {
+            if (_items.Count > 0)
+                return _items.Last().Id + 1;
+            else
+                return 0;
         }
     }
 }

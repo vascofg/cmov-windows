@@ -17,7 +17,7 @@
 
     <Page.Resources>
         <DataTemplate x:Key="MasterListViewItemTemplate" x:DataType="viewmodels:StockViewModel">
-            <Grid Margin="0,11,0,13">
+            <Grid Margin="0,11,0,13" IsHitTestVisible="False">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -90,13 +90,18 @@
         </Grid.ColumnDefinitions>
 
         <CommandBar>
-            <AppBarButton x:Name="AppBarAddButton" Icon="Add" Label="Add" Click="AppBarButton_Click"/>
             <CommandBar.Content>
                 <TextBlock
                     Text="My portfolio"
                     Margin="12,8,8,8"
                     Style="{ThemeResource TitleTextBlockStyle}" />
             </CommandBar.Content>
+            <CommandBar.PrimaryCommands>
+                <AppBarButton x:Name="AppBarRefreshButton" Icon="Refresh" Label="Refresh" Click="AppBarButton_Click"/>
+            </CommandBar.PrimaryCommands>
+            <CommandBar.SecondaryCommands>
+                <AppBarButton x:Name="AppBarAddButton" Icon="Add" Label="Add" Click="AppBarButton_Click"/>
+            </CommandBar.SecondaryCommands>
         </CommandBar>
 
         <ListView
@@ -104,7 +109,11 @@
             Grid.Row="1"
             ItemContainerTransitions="{x:Null}"
             ItemTemplate="{StaticResource MasterListViewItemTemplate}"
+            IsHoldingEnabled="True"
             IsItemClickEnabled="True"
+            IsRightTapEnabled="True"
+            RightTapped="MasterListView_RightTapped"
+            Holding="MasterListView_Holding"
             ItemClick="MasterListView_ItemClick">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">

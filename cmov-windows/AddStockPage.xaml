@@ -1,0 +1,24 @@
+﻿<Page
+    x:Class="MasterDetailApp.AddStock"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MasterDetailApp"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <CommandBar>
+            <AppBarButton x:Name="AppBarAddButton" Icon="Add" Label="Add" Click="AppBarButton_Click"/>
+            <CommandBar.Content>
+                <TextBlock
+                    Text="Add to portfolio"
+                    Margin="12,8,8,8"
+                    Style="{ThemeResource TitleTextBlockStyle}" />
+            </CommandBar.Content>
+        </CommandBar>
+        
+        <TextBox x:Name="Tick" PlaceholderText="Tick"></TextBox>
+        <TextBox x:Name="Name" PlaceholderText="Name"></TextBox>
+    </StackPanel>
+</Page>
