@@ -3,6 +3,8 @@ var request = require("request");
 var ticksArray = ['GOOG'];
 var subModel;
 
+var wns = require('wns');
+
 //new CronJob(, function() {
 //    console.log('You will see this message every second');
 //}, null, true, 'America/Los_Angeles');
@@ -60,14 +62,38 @@ cronJob.start();
 
 exports.testHandler = function (request, reply) {
 
-    var subModel = request.server.plugins['hapi-sequelized'].db.sequelize.models.Subscription;
-
-    subModel.findAllSubscriptionsForTick(subModel, "GOOG").then(function (sub) {
-        console.log(ticksArray);
-        reply(sub[0].tick).code(200);
-    }) ;
+    //var subModel = request.server.plugins['hapi-sequelized'].db.sequelize.models.Subscription;
     //
-    //reply("Cenas fixes").code(200);
+    //subModel.findAllSubscriptionsForTick(subModel, "GOOG").then(function (sub) {
+    //    console.log(ticksArray);
+    //    reply(sub[0].tick).code(200);
+    //}) ;
+    ////
+    ////reply("Cenas fixes").code(200);
+
+    var channelUrl = 'https://db3.notify.windows.com/?token=AwYAAAC6IexUGDHdtC0GyTsW6iH53x6OpWOz9IJO3VaD2YkOFeIA37aNwDvP2d2EjEgB12Yixx%2ftX%2bGCbz0rYa%2fu4gsZ6sbgSd1wMQ3vJ2uKeZC1ZXRzZyCC6a%2fJ2UPhgfxmlL4%3d';
+    var options = {
+        client_id: 'ms-app://s-1-15-2-4287070966-1989927393-467488029-2973939963-185367217-2307472262-677282393',
+        client_secret: '1nKHUVIroDF3Hbhuygp6w075ZtOaxpnc'
+    };
+
+    //wns.sendTileSquareBlock(channelUrl, 'Yes!', 'It worked!', options, function (error, result) {
+    //    if (error)
+    //        console.error(error);
+    //    else
+    //        console.log(result);
+    //});
+
+    //wns.sendToastText01(channelUrl,{
+    //    text1: 'This is a dog',
+    //    text2: 'The dog is nice',
+    //}, options, function (error, result) {
+    //    if (error)
+    //        console.error(error);
+    //    else
+    //        console.log(result);
+    //});
+
 };
 
 exports.addSubHandler = function (request, reply) {
