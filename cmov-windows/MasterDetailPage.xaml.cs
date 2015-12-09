@@ -145,19 +145,17 @@ namespace MasterDetailApp
             }
         }
 
-        private async void MasterListView_Holding(object sender, HoldingRoutedEventArgs e)
+        private void MasterListView_Flyout(object sender, RoutedEventArgs e)
         {
-            var items = MasterListView.ItemsSource as ObservableCollection<StockViewModel>;
-            var item = (e.OriginalSource as ListViewItemPresenter).DataContext as StockViewModel;
-            await StocksDataSource.DeleteItemById(item.ItemId);
-            items.Remove(item);
-            _lastSelectedItem = null;
+            FrameworkElement senderElement = sender as FrameworkElement;
+            FlyoutBase flyoutBase = FlyoutBase.GetAttachedFlyout(senderElement);
+            flyoutBase.ShowAt(senderElement);
         }
 
-        private async void MasterListView_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        private async void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             var items = MasterListView.ItemsSource as ObservableCollection<StockViewModel>;
-            var item = (e.OriginalSource as ListViewItemPresenter).DataContext as StockViewModel;
+            var item = (e.OriginalSource as FrameworkElement).DataContext as StockViewModel;
             await StocksDataSource.DeleteItemById(item.ItemId);
             items.Remove(item);
             _lastSelectedItem = null;

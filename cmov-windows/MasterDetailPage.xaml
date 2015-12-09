@@ -17,7 +17,7 @@
 
     <Page.Resources>
         <DataTemplate x:Key="MasterListViewItemTemplate" x:DataType="viewmodels:StockViewModel">
-            <Grid Margin="0,11,0,13" IsHitTestVisible="False">
+            <Grid Margin="0,11,0,13" RightTapped="MasterListView_Flyout" Holding="MasterListView_Flyout">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -27,6 +27,14 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
+
+                <FlyoutBase.AttachedFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem x:Name="DeleteButton"
+                                                            Text="Delete"
+                                                            Click="DeleteButton_Click"/>
+                    </MenuFlyout>
+                </FlyoutBase.AttachedFlyout>
 
                 <TextBlock Text="{x:Bind Tick}" Style="{ThemeResource BaseTextBlockStyle}" />
 
@@ -109,11 +117,7 @@
             Grid.Row="1"
             ItemContainerTransitions="{x:Null}"
             ItemTemplate="{StaticResource MasterListViewItemTemplate}"
-            IsHoldingEnabled="True"
             IsItemClickEnabled="True"
-            IsRightTapEnabled="True"
-            RightTapped="MasterListView_RightTapped"
-            Holding="MasterListView_Holding"
             ItemClick="MasterListView_ItemClick">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
