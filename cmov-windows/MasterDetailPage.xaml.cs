@@ -151,6 +151,7 @@ namespace MasterDetailApp
             var item = (e.OriginalSource as ListViewItemPresenter).DataContext as StockViewModel;
             await StocksDataSource.DeleteItemById(item.ItemId);
             items.Remove(item);
+            _lastSelectedItem = null;
         }
 
         private async void MasterListView_RightTapped(object sender, RightTappedRoutedEventArgs e)
@@ -159,6 +160,7 @@ namespace MasterDetailApp
             var item = (e.OriginalSource as ListViewItemPresenter).DataContext as StockViewModel;
             await StocksDataSource.DeleteItemById(item.ItemId);
             items.Remove(item);
+            _lastSelectedItem = null;
         }
     }
 }
