@@ -132,7 +132,7 @@ exports.testHandler = function (request, reply) {
 };
 
 exports.addSubHandler = function (request, reply) {
-    var subModel = request.server.plugins['hapi-sequelized'].db.sequelize.models.Subscription;
+    var subModel = request.server.plugins['hapi-sequelize'].db.sequelize.models.Subscription;
 
     var tick = request.payload.tick;
     var max = request.payload.max;

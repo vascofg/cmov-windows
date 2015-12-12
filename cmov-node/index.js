@@ -10,7 +10,7 @@ var manifest = {
     ],
     plugins: [
         {
-            'hapi-sequelized': {
+            'hapi-sequelize': {
                 database: 'dbltcocs5l7m41',
                 user: 'kyaiteeygnwzve',
                 pass: 'XEk8haSjZ6PbsXc34AkewgGUMw',
@@ -51,12 +51,12 @@ Glue.compose(manifest, options, function (err, server) {
     }
 
     console.log('syncing');
-    var db = server.plugins['hapi-sequelized'].db;
+    var db = server.plugins['hapi-sequelize'].db;
     db.sequelize.sync({force: true}).then(function () {
         console.log('models synced');
 
         var handler = require('./handlers/handlers.js');
-        handler.saveSubModel(server.plugins['hapi-sequelized'].db.sequelize.models.Subscription);
+        handler.saveSubModel(server.plugins['hapi-sequelize'].db.sequelize.models.Subscription);
         //var tripModel = server.plugins['hapi-sequelized'].db.sequelize.models.Trip;
         //
         //tripModel.addTrips(tripModel);
