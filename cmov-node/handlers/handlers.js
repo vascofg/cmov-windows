@@ -133,6 +133,34 @@ exports.testHandler = function (request, reply) {
 
 };
 
+exports.delSubHandler = function (request, reply) {
+    var subModel = request.server.plugins['hapi-sequelize'].db.sequelize.models.Subscription;
+
+    var tick = request.payload.tick;
+    var wns = request.payload.wns;
+
+    if (tick && wns) {
+        subModel.delSub(subModel, tick, wns).then(function (sub) {
+                //console.log(sub);
+                if (sub) {
+                    sub[0].destroy().then(function (err) {
+                        console.log("destroy");
+                        console.log(err);
+                        reply().code(200);
+                    });
+                }
+                else
+                    reply().code(500);
+            })
+            .catch(function (error) {
+                console.log(error);
+                reply().code(500);
+            })
+    } else {
+        reply().code(400);
+    }
+};
+
 exports.addSubHandler = function (request, reply) {
     var subModel = request.server.plugins['hapi-sequelize'].db.sequelize.models.Subscription;
 
@@ -141,10 +169,10 @@ exports.addSubHandler = function (request, reply) {
     var min = request.payload.min;
     var wns = request.payload.wns;
 
-    console.log("TICK:" + tick);
-    console.log("MAX:" + max);
-    console.log("MIN:" + min);
-    console.log("WNS:" + wns);
+    //console.log("TICK:" + tick);
+    //console.log("MAX:" + max);
+    //console.log("MIN:" + min);
+    //console.log("WNS:" + wns);
     if (tick && max && min && wns) {
         subModel.addSub(subModel, tick, max, min, wns).then(function (sub) {
             //console.log(sub);
