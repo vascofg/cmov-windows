@@ -157,6 +157,8 @@ exports.addSubHandler = function (request, reply) {
                 console.log(error);
                 reply().code(500);
             })
+    } else {
+        reply().code(400);
     }
 };
 
