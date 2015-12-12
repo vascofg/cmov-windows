@@ -141,7 +141,7 @@ exports.delSubHandler = function (request, reply) {
 
     if (tick && wns) {
         subModel.delSub(subModel, tick, wns).then(function (sub) {
-                //console.log(sub);
+                console.log(sub);
                 if (sub) {
                     sub[0].destroy().then(function (err) {
                         console.log("destroy");
