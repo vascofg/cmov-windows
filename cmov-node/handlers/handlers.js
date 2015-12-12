@@ -22,7 +22,7 @@ var cron = require('cron');
 //every second '* * * * * *'
 //every minute '0 * * * * *'
 //'*/5 * * * * *' - runs every 5 seconds
-var cronJob = cron.job('*/30 * * * * *', function(){
+var cronJob = cron.job('*/10 * * * * *', function(){
 
     var url = "http://finance.yahoo.com/d/quotes?f=sl1d1t1v&s=";
     ticksArray.forEach(function (tick) {
@@ -95,7 +95,7 @@ var cronJob = cron.job('*/30 * * * * *', function(){
 
     console.info('cron job completed');
 });
-//cronJob.start();
+cronJob.start();
 
 exports.testHandler = function (request, reply) {
 
