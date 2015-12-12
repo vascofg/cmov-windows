@@ -141,6 +141,10 @@ exports.addSubHandler = function (request, reply) {
     var min = request.payload.min;
     var wns = request.payload.wns;
 
+    console.log("TICK:" + tick);
+    console.log("MAX:" + max);
+    console.log("MIN:" + min);
+    console.log("WNS:" + wns);
     if (tick && max && min && wns) {
         subModel.addSub(subModel, tick, max, min, wns).then(function (sub) {
             //console.log(sub);
