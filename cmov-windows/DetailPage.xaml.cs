@@ -1,5 +1,5 @@
-﻿using MasterDetailApp.Data;
-using MasterDetailApp.ViewModels;
+﻿using BoneStock.Data;
+using BoneStock.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 
-namespace MasterDetailApp
+namespace BoneStock
 {
 
     public sealed partial class DetailPage : Page

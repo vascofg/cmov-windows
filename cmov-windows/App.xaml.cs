@@ -8,14 +8,14 @@ using Windows.UI.Xaml.Navigation;
 using System.Diagnostics;
 using Windows.Storage;
 using System.Runtime.Serialization.Json;
-using MasterDetailApp.Data;
+using BoneStock.Data;
 using System.IO;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
-namespace MasterDetailApp
+namespace BoneStock
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.

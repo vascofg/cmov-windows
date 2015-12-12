@@ -1,15 +1,20 @@
-﻿using MasterDetailApp.Data;
-using MasterDetailApp.ViewModels;
+﻿using BoneStock.Data;
+using BoneStock.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
 using System.Threading.Tasks;
+using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -19,7 +24,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
-namespace MasterDetailApp
+namespace BoneStock
 {
     public sealed partial class MasterDetailPage : Page
     {
@@ -157,6 +162,32 @@ namespace MasterDetailApp
             var items = MasterListView.ItemsSource as ObservableCollection<StockViewModel>;
             var item = (e.OriginalSource as FrameworkElement).DataContext as StockViewModel;
             await StocksDataSource.DeleteItemById(item.ItemId);
+
+            HttpClient aClient = new HttpClient();
+
+            string uriStr = "http://cmov-trains.herokuapp.com/delSub";
+
+            try
+            {
+                var json = new JsonObject();
+                json.Add("tick", JsonValue.CreateStringValue(item.Tick));
+                json.Add("wns", JsonValue.CreateStringValue((Application.Current as App).channel.Uri));
+
+                HttpResponseMessage aResponse = await aClient.PostAsync(new Uri(uriStr), new StringContent(json.ToString(), Encoding.UTF8, "application/json"));
+                if (aResponse.IsSuccessStatusCode)
+                {
+                }
+                else
+                {
+                    // show the response status code 
+                    String failureMsg = "HTTP Status: " + aResponse.StatusCode.ToString() + " - Reason: " + aResponse.ReasonPhrase;
+                    new MessageDialog(failureMsg, "Error").ShowAsync();
+                }
+            }
+            catch (COMException)
+            {
+                new MessageDialog("Connection error", "Error").ShowAsync();
+            }
             items.Remove(item);
             _lastSelectedItem = null;
         }

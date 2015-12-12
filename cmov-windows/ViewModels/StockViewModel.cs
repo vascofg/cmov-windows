@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using MasterDetailApp.Data;
+using BoneStock.Data;
 using Windows.Globalization.DateTimeFormatting;
 
-namespace MasterDetailApp.ViewModels
+namespace BoneStock.ViewModels
 {
     public class StockViewModel
     {
