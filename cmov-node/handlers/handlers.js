@@ -95,7 +95,7 @@ var cronJob = cron.job('*/10 * * * * *', function(){
 
     console.info('cron job completed');
 });
-cronJob.start();
+//cronJob.start();
 
 exports.testHandler = function (request, reply) {
 
