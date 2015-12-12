@@ -38,6 +38,14 @@ module.exports = function (sequelize, DataTypes) {
                         min: min,
                         wns: wns
                     });
+                },
+                delSub: function (subModel, tick, wns) {
+                    return subModel.destroy({
+                        where: {
+                            tick:tick,
+                            wns: wns
+                        }
+                    });
                 }
             },
             tableName: 'subscription',

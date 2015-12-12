@@ -14,5 +14,12 @@ module.exports = [
         handler: function (request, reply) {
             handlers.addSubHandler(request, reply);
         }
+    },
+    {
+        method: 'POST',
+        path: '/delSub',
+        handler: function (request, reply) {
+            handlers.delSubHandler(request, reply);
+        }
     }
 ];

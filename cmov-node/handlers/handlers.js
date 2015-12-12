@@ -1,9 +1,14 @@
 var http = require('http');
 var request = require("request");
-var ticksArray = ['GOOG'];
+var ticksArray = ['GOOG', 'AAPL'];
 var subModel;
 
 var wns = require('wns');
+
+var options = {
+    client_id: 'ms-app://s-1-15-2-4287070966-1989927393-467488029-2973939963-185367217-2307472262-677282393',
+    client_secret: '1nKHUVIroDF3Hbhuygp6w075ZtOaxpnc'
+};
 
 //new CronJob(, function() {
 //    console.log('You will see this message every second');
@@ -21,12 +26,12 @@ var cronJob = cron.job('*/10 * * * * *', function(){
 
     var url = "http://finance.yahoo.com/d/quotes?f=sl1d1t1v&s=";
     ticksArray.forEach(function (tick) {
-       url += url + tick + ",";
+       url = url + tick + ",";
     });
 
     //console.log(url);
 
-    request("http://finance.yahoo.com/d/quotes?f=sl1d1t1v&s=GOOG", function(error, response, body) {
+    request(url, function(error, response, body) {
         //console.log(response.statusCode);
         if (response.statusCode == 200) {
             var stockArray = body.split('\n');
@@ -42,10 +47,42 @@ var cronJob = cron.job('*/10 * * * * *', function(){
                             if (subArray) {
                                 //console.log(subArray);
                                 subArray.forEach(function(sub) {
-                                    if (sub.max < stockValue || sub.min > stockValue) {
-                                        console.log('manda notif');
-                                    } else {
-                                        console.log('tou quietinho');
+                                    var channelUrl = sub.wns;
+                                    var title = tickName + " stock value is";
+                                    wns.sendTileSquareBlock(channelUrl, title, stockValue, options, function (error, result) {
+                                        if (error)
+                                            console.error(error);
+                                        else
+                                            console.log(result);
+                                    });
+
+                                    if (sub.max != -1) {
+                                        if (sub.max < stockValue) {
+                                            console.log('manda notif');
+                                            wns.sendToastText01(channelUrl, {
+                                                text1: 'Stock for ' + tickName + " is above " + sub.max,
+                                                text2: 'Current value is' + stockValue
+                                            }, options, function (error, result) {
+                                                if (error)
+                                                    console.error(error);
+                                                else
+                                                    console.log(result);
+                                            });
+
+                                        } else if (sub.min > stockValue) {
+                                            console.log('manda notif');
+                                            wns.sendToastText01(channelUrl, {
+                                                text1: 'Stock for ' + tickName + " is below " + sub.min,
+                                                text2: 'Current value is' + stockValue
+                                            }, options, function (error, result) {
+                                                if (error)
+                                                    console.error(error);
+                                                else
+                                                    console.log(result);
+                                            });
+                                        } else {
+                                            console.log('tou quietinho');
+                                        }
                                     }
                                 })
                             }
@@ -58,7 +95,7 @@ var cronJob = cron.job('*/10 * * * * *', function(){
 
     console.info('cron job completed');
 });
-cronJob.start();
+//cronJob.start();
 
 exports.testHandler = function (request, reply) {
 
@@ -96,14 +133,47 @@ exports.testHandler = function (request, reply) {
 
 };
 
+exports.delSubHandler = function (request, reply) {
+    var subModel = request.server.plugins['hapi-sequelize'].db.sequelize.models.Subscription;
+
+    var tick = request.payload.tick;
+    var wns = request.payload.wns;
+
+    if (tick && wns) {
+        subModel.delSub(subModel, tick, wns).then(function (sub) {
+                console.log(sub);
+                if (sub) {
+                    //sub.destroy().then(function (err) {
+                    //    console.log("destroy");
+                    //    console.log(err);
+                    //
+                    //});
+                    reply().code(200);
+                }
+                else
+                    reply().code(500);
+            })
+            .catch(function (error) {
+                console.log(error);
+                reply().code(500);
+            })
+    } else {
+        reply().code(400);
+    }
+};
+
 exports.addSubHandler = function (request, reply) {
-    var subModel = request.server.plugins['hapi-sequelized'].db.sequelize.models.Subscription;
+    var subModel = request.server.plugins['hapi-sequelize'].db.sequelize.models.Subscription;
 
     var tick = request.payload.tick;
     var max = request.payload.max;
     var min = request.payload.min;
     var wns = request.payload.wns;
 
+    //console.log("TICK:" + tick);
+    //console.log("MAX:" + max);
+    //console.log("MIN:" + min);
+    //console.log("WNS:" + wns);
     if (tick && max && min && wns) {
         subModel.addSub(subModel, tick, max, min, wns).then(function (sub) {
             //console.log(sub);
@@ -120,6 +190,8 @@ exports.addSubHandler = function (request, reply) {
                 console.log(error);
                 reply().code(500);
             })
+    } else {
+        reply().code(400);
     }
 };
 
