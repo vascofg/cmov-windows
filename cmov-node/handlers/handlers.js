@@ -1,6 +1,6 @@
 var http = require('http');
 var request = require("request");
-var ticksArray = ['GOOG'];
+var ticksArray = ['GOOG', 'AAPL'];
 var subModel;
 
 var wns = require('wns');
@@ -56,31 +56,33 @@ var cronJob = cron.job('*/30 * * * * *', function(){
                                             console.log(result);
                                     });
 
-                                    if (sub.max < stockValue) {
-                                        console.log('manda notif');
-                                        wns.sendToastText01(channelUrl,{
-                                            text1: 'Stock for ' + tickName + " is above " + sub.max,
-                                            text2: 'Current value is' + stockValue
-                                        }, options, function (error, result) {
-                                            if (error)
-                                                console.error(error);
-                                            else
-                                                console.log(result);
-                                        });
+                                    if (sub.max != -1) {
+                                        if (sub.max < stockValue) {
+                                            console.log('manda notif');
+                                            wns.sendToastText01(channelUrl, {
+                                                text1: 'Stock for ' + tickName + " is above " + sub.max,
+                                                text2: 'Current value is' + stockValue
+                                            }, options, function (error, result) {
+                                                if (error)
+                                                    console.error(error);
+                                                else
+                                                    console.log(result);
+                                            });
 
-                                    } else if (sub.min > stockValue) {
-                                        console.log('manda notif');
-                                        wns.sendToastText01(channelUrl,{
-                                            text1: 'Stock for ' + tickName + " is below " + sub.min,
-                                            text2: 'Current value is' + stockValue
-                                        }, options, function (error, result) {
-                                            if (error)
-                                                console.error(error);
-                                            else
-                                                console.log(result);
-                                        });
-                                    } else {
-                                        console.log('tou quietinho');
+                                        } else if (sub.min > stockValue) {
+                                            console.log('manda notif');
+                                            wns.sendToastText01(channelUrl, {
+                                                text1: 'Stock for ' + tickName + " is below " + sub.min,
+                                                text2: 'Current value is' + stockValue
+                                            }, options, function (error, result) {
+                                                if (error)
+                                                    console.error(error);
+                                                else
+                                                    console.log(result);
+                                            });
+                                        } else {
+                                            console.log('tou quietinho');
+                                        }
                                     }
                                 })
                             }

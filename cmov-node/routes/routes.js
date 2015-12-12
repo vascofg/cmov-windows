@@ -13,6 +13,6 @@ module.exports = [
         path: '/addSub',
         handler: function (request, reply) {
             handlers.addSubHandler(request, reply);
-        } 
+        }
     }
 ];
