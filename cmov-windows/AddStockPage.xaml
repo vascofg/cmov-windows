@@ -1,14 +1,26 @@
-﻿<Page
-    x:Class="MasterDetailApp.AddStock"
+﻿<Page xmlns:Controls="using:WinRTXamlToolkit.Controls" 
+    x:Class="BoneStock.AddStock"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:MasterDetailApp"
+    xmlns:local="using:BoneStock"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <CommandBar>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50*"/>
+            <ColumnDefinition Width="25*"/>
+            <ColumnDefinition Width="25*"/>
+        </Grid.ColumnDefinitions>
+        <CommandBar Grid.Row="0" Grid.ColumnSpan="3">
             <AppBarButton x:Name="AppBarAddButton" Icon="Add" Label="Add" Click="AppBarButton_Click"/>
             <CommandBar.Content>
                 <TextBlock
@@ -17,8 +29,13 @@
                     Style="{ThemeResource TitleTextBlockStyle}" />
             </CommandBar.Content>
         </CommandBar>
-        
-        <TextBox x:Name="Tick" PlaceholderText="Tick"></TextBox>
-        <TextBox x:Name="Name" PlaceholderText="Name"></TextBox>
-    </StackPanel>
+
+        <TextBox Grid.Row="1" Grid.ColumnSpan="3" x:Name="Tick" PlaceholderText="Tick"></TextBox>
+        <TextBox Grid.Row="2" Grid.ColumnSpan="3" x:Name="Name" PlaceholderText="Name"></TextBox>
+        <CheckBox Checked="checkBox_Checked_Unchecked" Unchecked="checkBox_Checked_Unchecked" Grid.Row="3" x:Name="checkBox" Content="Alerts" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <TextBlock Grid.Column="1" Grid.Row="3">Minimum</TextBlock>
+        <TextBlock Grid.Column="1" Grid.Row="4">Maximum</TextBlock>
+        <Controls:NumericUpDown IsEnabled="False" x:Name="alertMin" LargeChange="1" Minimum="0.01" Maximum="5000" Grid.Row="3" Grid.Column="2"/>
+        <Controls:NumericUpDown IsEnabled="False" x:Name="alertMax" LargeChange="1" Minimum="0.01" Maximum="5000" Grid.Row="4" Grid.Column="2"/>
+    </Grid>
 </Page>

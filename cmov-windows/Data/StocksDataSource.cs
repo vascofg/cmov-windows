@@ -13,7 +13,7 @@ using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.Web.Http;
 
-namespace MasterDetailApp.Data
+namespace BoneStock.Data
 {
     public class StocksDataSource
     {
