@@ -8,7 +8,7 @@
     "start": "node --harmony index.js"
   },
   "engines": {
-    "node": "0.12.4"
+    "node": "4.2.3"
   },
   "author": "",
   "license": "ISC",
