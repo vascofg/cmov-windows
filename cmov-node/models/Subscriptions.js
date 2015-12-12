@@ -40,7 +40,7 @@ module.exports = function (sequelize, DataTypes) {
                     });
                 },
                 delSub: function (subModel, tick, wns) {
-                    return subModel.find({
+                    return subModel.destroy({
                         where: {
                             tick:tick,
                             wns: wns

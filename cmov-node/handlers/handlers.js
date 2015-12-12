@@ -143,11 +143,12 @@ exports.delSubHandler = function (request, reply) {
         subModel.delSub(subModel, tick, wns).then(function (sub) {
                 console.log(sub);
                 if (sub) {
-                    sub[0].destroy().then(function (err) {
-                        console.log("destroy");
-                        console.log(err);
-                        reply().code(200);
-                    });
+                    //sub.destroy().then(function (err) {
+                    //    console.log("destroy");
+                    //    console.log(err);
+                    //
+                    //});
+                    reply().code(200);
                 }
                 else
                     reply().code(500);
