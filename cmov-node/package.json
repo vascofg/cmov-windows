@@ -7,6 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node --harmony index.js"
   },
+  "engines": {
+    "node": "0.12.4"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
