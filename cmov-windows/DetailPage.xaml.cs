@@ -32,20 +32,6 @@ namespace BoneStock
         public DetailPage()
         {
             this.InitializeComponent();
-            this.Loaded += DetailPage_Loaded;
-        }
-
-        private async void LineSeries_Loaded(object sender, RoutedEventArgs e)
-        {
-            await Reload_Graph();
-
-            GraphGroup.SelectionChanged += GraphGroup_SelectionChanged;
-            GraphStartDate.DateChanged += GraphStartDate_DateChanged;
-        }
-
-        private void DetailPage_Loaded(object sender, RoutedEventArgs e)
-        {
-            GraphStartDate.MaxDate = DateTime.Now.AddDays(-1);
         }
 
         public ObservableCollection<Stock> items;
@@ -133,6 +119,13 @@ namespace BoneStock
             }
 
             Window.Current.SizeChanged += Window_SizeChanged;
+            
+            Reload_Graph();
+
+            GraphStartDate.MaxDate = DateTime.Now.AddDays(-1);
+
+            GraphGroup.SelectionChanged += GraphGroup_SelectionChanged;
+            GraphStartDate.DateChanged += GraphStartDate_DateChanged;
         }
 
         private void PageRoot_Unloaded(object sender, RoutedEventArgs e)
