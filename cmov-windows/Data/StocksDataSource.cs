@@ -127,5 +127,51 @@ namespace BoneStock.Data
             else
                 return 0;
         }
+
+        public async static Task<List<Stock>> getGraph(string Tick)
+        {
+            HttpClient aClient = new HttpClient();
+
+            string uriStr = "http://ichart.finance.yahoo.com/table.txt?a=0&b=0&c=2015&d=11&e=30&f=2015&g=d&s="+Tick;
+
+            List<Stock> items = new List<Stock>();
+
+            try
+            {
+                HttpResponseMessage aResponse = await aClient.GetAsync(new Uri(uriStr));
+
+                if (aResponse.IsSuccessStatusCode)
+                {
+                    String responseDataString = await aResponse.Content.ReadAsStringAsync();
+                    String[] stockLines = responseDataString.Split('\n');
+                    for (int i = 1; i < stockLines.Length; i++) //skip title
+                    {
+                        String[] stockLine = stockLines[i].Split(',');
+                        string date = stockLine[0];
+                        float value = float.Parse(stockLine[4]);
+                        try
+                        {
+                            Stock s = new Stock(Tick, value, date);
+                            items.Add(s);
+                        }
+                        catch (FormatException e)
+                        {
+                            new MessageDialog("Bad response for " + _items.ElementAt(i).Tick, "Error").ShowAsync();
+                        }
+                    }
+                }
+                else
+                {
+                    // show the response status code 
+                    String failureMsg = "HTTP Status: " + aResponse.StatusCode.ToString() + " - Reason: " + aResponse.ReasonPhrase;
+                    new MessageDialog(failureMsg, "Error").ShowAsync();
+                }
+            }
+            catch (COMException e)
+            {
+                new MessageDialog("Connection error", "Error").ShowAsync();
+            }
+            return items;
+        }
     }
 }

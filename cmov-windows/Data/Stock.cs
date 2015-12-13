@@ -22,6 +22,18 @@ namespace BoneStock.Data
         [IgnoreDataMember]
         public float Value { get; set; }
 
+        [IgnoreDataMember]
+        public string Date { get; set; } //only used for chart
+
+        public Stock(string tick, float value, string date)
+        {
+            this.Id = -1;
+            this.Tick = tick;
+            this.Name = "";
+            this.Value = value;
+            this.Date = date;
+        }
+
         public Stock(int id, string tick, string name)
         {
             this.Id = id;

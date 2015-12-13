@@ -2,6 +2,7 @@
 using BoneStock.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -16,7 +17,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
-
+using WinRTXamlToolkit.Controls.DataVisualization.Charting;
 
 namespace BoneStock
 {
@@ -40,14 +41,24 @@ namespace BoneStock
         public DetailPage()
         {
             this.InitializeComponent();
+            this.Loaded += DetailPage_Loaded;
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        private void DetailPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            (LineChart.Series[0] as AreaSeries).ItemsSource = items;
+        }
+
+        public List<Stock> items;
+
+        protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
             // Parameter is item ID
             Item = StockViewModel.FromStock(StocksDataSource.GetItemById((int)e.Parameter));
+
+            items = await StocksDataSource.getGraph(Item.Tick);
 
             var backStack = Frame.BackStack;
             var backStackCount = backStack.Count;
