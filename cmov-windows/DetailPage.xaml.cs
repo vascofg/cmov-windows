@@ -1,20 +1,11 @@
 ﻿using BoneStock.Data;
 using BoneStock.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using System.Threading.Tasks;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using WinRTXamlToolkit.Controls.DataVisualization.Charting;
@@ -44,21 +35,27 @@ namespace BoneStock
             this.Loaded += DetailPage_Loaded;
         }
 
-        private void DetailPage_Loaded(object sender, RoutedEventArgs e)
+        private async void LineSeries_Loaded(object sender, RoutedEventArgs e)
         {
-            (LineChart.Series[0] as AreaSeries).ItemsSource = items;
+            await Reload_Graph();
+
+            GraphGroup.SelectionChanged += GraphGroup_SelectionChanged;
+            GraphStartDate.DateChanged += GraphStartDate_DateChanged;
         }
 
-        public List<Stock> items;
+        private void DetailPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            GraphStartDate.MaxDate = DateTime.Now.AddDays(-1);
+        }
 
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        public ObservableCollection<Stock> items;
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
             // Parameter is item ID
             Item = StockViewModel.FromStock(StocksDataSource.GetItemById((int)e.Parameter));
-
-            items = await StocksDataSource.getGraph(Item.Tick);
 
             var backStack = Frame.BackStack;
             var backStackCount = backStack.Count;
@@ -161,6 +158,34 @@ namespace BoneStock
             e.Handled = true;
 
             OnBackRequested();
+        }
+
+        private async Task Reload_Graph()
+        {
+            if (GraphStartDate.Date == null)
+            {
+                items = new ObservableCollection<Stock>(await StocksDataSource.getGraph(
+                    Item.Tick, new DateTime(DateTime.Now.Year, 01, 01),
+                    (GraphGroup.SelectedItem as ComboBoxItem).Tag.ToString()[0]));
+            }
+            else
+            {
+                items = new ObservableCollection<Stock>(await StocksDataSource.getGraph(
+                    Item.Tick, GraphStartDate.Date.GetValueOrDefault().LocalDateTime,
+                    (GraphGroup.SelectedItem as ComboBoxItem).Tag.ToString()[0]));
+            }
+            
+            (LineChart.Series[0] as DataPointSeries).ItemsSource = items;
+        }
+
+        private async void GraphStartDate_DateChanged(CalendarDatePicker sender, CalendarDatePickerDateChangedEventArgs args)
+        {
+            await Reload_Graph();
+        }
+
+        private async void GraphGroup_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            await Reload_Graph();
         }
     }
 }

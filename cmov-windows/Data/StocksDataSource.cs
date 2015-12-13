@@ -128,11 +128,15 @@ namespace BoneStock.Data
                 return 0;
         }
 
-        public async static Task<List<Stock>> getGraph(string Tick)
+        public async static Task<IList<Stock>> getGraph(string Tick, DateTime start, char group)
         {
             HttpClient aClient = new HttpClient();
 
-            string uriStr = "http://ichart.finance.yahoo.com/table.txt?a=0&b=0&c=2015&d=11&e=30&f=2015&g=d&s="+Tick;
+            DateTime now = DateTime.Now;
+
+            string uriStr = "http://ichart.finance.yahoo.com/table.txt?a="+(start.Month-1)+
+                "&b="+(start.Day)+"&c="+(start.Year)+"&d="+(now.Month-1)+
+                "&e="+(now.Day)+"&f="+(now.Year)+"&g="+group+"&s="+Tick;
 
             List<Stock> items = new List<Stock>();
 
@@ -144,10 +148,26 @@ namespace BoneStock.Data
                 {
                     String responseDataString = await aResponse.Content.ReadAsStringAsync();
                     String[] stockLines = responseDataString.Split('\n');
-                    for (int i = 1; i < stockLines.Length; i++) //skip title
+                    for (int i = stockLines.Length-1; i > 0; i--) //skip title
                     {
                         String[] stockLine = stockLines[i].Split(',');
-                        string date = stockLine[0];
+                        if (stockLine.Length < 5)
+                            continue;
+                        DateTime dateTime = DateTime.Parse(stockLine[0]);
+                        string date = null;
+                        switch(group)
+                        {
+                            case 'w':
+                                date = Math.Ceiling(dateTime.DayOfYear / 7.0).ToString();
+                                break;
+                            case 'd':
+                                date = dateTime.Day + "/" + dateTime.Month;
+                                break;
+                            case 'm':
+                                date = dateTime.Month.ToString();
+                                break;
+
+                        }
                         float value = float.Parse(stockLine[4]);
                         try
                         {

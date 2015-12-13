@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Charting="using:WinRTXamlToolkit.Controls.DataVisualization.Charting"
+    xmlns:Datavis="using:WinRTXamlToolkit.Controls.DataVisualization"
     x:Class="BoneStock.DetailPage"
     mc:Ignorable="d"
     x:Name="PageRoot"
@@ -19,29 +20,85 @@
     </Page.Transitions>
 
     <!-- Don't realize our content by default. See PageRoot_Loaded. -->
-    <StackPanel x:Name="RootPanel" x:DeferLoadStrategy="Lazy">
+    <Grid x:Name="RootPanel" x:DeferLoadStrategy="Lazy">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="25*"/>
+            <ColumnDefinition Width="75*"/>
+        </Grid.ColumnDefinitions>
         <TextBlock
 			Margin="8,0"
+            Grid.Row="0"
 			Style="{ThemeResource TitleTextBlockStyle}"
 			HorizontalAlignment="Left"
 			Text="{x:Bind Item.Name, Mode=OneWay}" />
 
+        <CalendarDatePicker x:Name="GraphStartDate" Margin="8,0" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right"/>
         <TextBlock
 			Margin="12,8"
+            Grid.Row="1"
 			HorizontalAlignment="Left"
 			MaxWidth="560"
 			Style="{ThemeResource BodyTextBlockStyle}"
 			Text="{x:Bind Item.Value, Mode=OneWay}"
 			EntranceNavigationTransitionInfo.IsTargetElement="True" />
+        <ComboBox Margin="12,8" x:Name="GraphGroup" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right">
+            <ComboBoxItem Tag="d">Day</ComboBoxItem>
+            <ComboBoxItem Tag="w" IsSelected="True">Week</ComboBoxItem>
+            <ComboBoxItem Tag="m">Month</ComboBoxItem>
+        </ComboBox>
         <Charting:Chart
+                Grid.ColumnSpan="2"
+                Grid.Row="2"
                 x:Name="LineChart"
-                Title="Line Chart w/Manually Set Axis Range"
-                Margin="70,0">
-            <Charting:AreaSeries
+                Height="500">
+            <Charting:Chart.LegendStyle>
+                <Style
+                        TargetType="Datavis:Legend">
+                    <Setter
+                            Property="Width"
+                            Value="0"/>
+                </Style>
+            </Charting:Chart.LegendStyle>
+            <Charting:LineSeries
+                    Loaded="LineSeries_Loaded"
                     Title="Values"
-                    IndependentValuePath="Date"
-                    DependentValuePath="Value"
-                    IsSelectionEnabled="True" />
+                    IndependentValueBinding="{Binding Date}"
+                    DependentValueBinding="{Binding Value}"
+                    IsSelectionEnabled="False">
+                <Charting:LineSeries.DataPointStyle>
+                    <Style
+                            TargetType="Charting:LineDataPoint">
+                        <Setter
+                                Property="BorderThickness"
+                                Value="0" />
+                        <Setter
+                                Property="IsTabStop"
+                                Value="False" />
+                        <Setter
+                                Property="Width"
+                                Value="0" />
+                        <Setter
+                                Property="Height"
+                                Value="0" />
+                        <Setter
+                                Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate
+                                        TargetType="Charting:LineDataPoint">
+                                    <Grid
+                                            x:Name="Root"
+                                            Opacity="0" />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Charting:LineSeries.DataPointStyle>
+            </Charting:LineSeries>
         </Charting:Chart>
-    </StackPanel>
+    </Grid>
 </Page>

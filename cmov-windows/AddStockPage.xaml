@@ -16,9 +16,9 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="50*"/>
-            <ColumnDefinition Width="25*"/>
-            <ColumnDefinition Width="25*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <CommandBar Grid.Row="0" Grid.ColumnSpan="3">
             <AppBarButton x:Name="AppBarAddButton" Icon="Add" Label="Add" Click="AppBarButton_Click"/>
@@ -30,12 +30,12 @@
             </CommandBar.Content>
         </CommandBar>
 
-        <TextBox Grid.Row="1" Grid.ColumnSpan="3" x:Name="Tick" PlaceholderText="Tick"></TextBox>
-        <TextBox Grid.Row="2" Grid.ColumnSpan="3" x:Name="Name" PlaceholderText="Name"></TextBox>
-        <CheckBox Checked="checkBox_Checked_Unchecked" Unchecked="checkBox_Checked_Unchecked" Grid.Row="3" x:Name="checkBox" Content="Alerts" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-        <TextBlock Grid.Column="1" Grid.Row="3">Minimum</TextBlock>
-        <TextBlock Grid.Column="1" Grid.Row="4">Maximum</TextBlock>
-        <Controls:NumericUpDown IsEnabled="False" x:Name="alertMin" LargeChange="1" Minimum="0.01" Maximum="5000" Grid.Row="3" Grid.Column="2"/>
-        <Controls:NumericUpDown IsEnabled="False" x:Name="alertMax" LargeChange="1" Minimum="0.01" Maximum="5000" Grid.Row="4" Grid.Column="2"/>
+        <TextBox Margin="0 8 0 4" Grid.Row="1" Grid.Column="1"  x:Name="Tick" PlaceholderText="Tick"></TextBox>
+        <TextBox Grid.Row="2" Grid.Column="1"  x:Name="Name" PlaceholderText="Name"></TextBox>
+        <CheckBox Checked="checkBox_Checked_Unchecked" Unchecked="checkBox_Checked_Unchecked" Grid.Row="2" Grid.Column="2" x:Name="checkBox" Content="Alerts" HorizontalAlignment="Right"/>
+        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="1" Grid.Row="3">Minimum</TextBlock>
+        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="1" Grid.Row="4">Maximum</TextBlock>
+        <Controls:NumericUpDown Margin="8 2" HorizontalAlignment="Right" IsEnabled="False" x:Name="alertMin" SmallChange="1" Minimum="0.01" Maximum="5000" Value="5" Grid.Row="3" Grid.Column="2"/>
+        <Controls:NumericUpDown Margin="8 2" HorizontalAlignment="Right"  IsEnabled="False" x:Name="alertMax" SmallChange="1" Minimum="0.01" Maximum="5000" Value="10" Grid.Row="4" Grid.Column="2"/>
     </Grid>
 </Page>
