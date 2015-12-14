@@ -9,7 +9,7 @@
     xmlns:Charting="using:WinRTXamlToolkit.Controls.DataVisualization.Charting"
     xmlns:Datavis="using:WinRTXamlToolkit.Controls.DataVisualization"
     mc:Ignorable="d"
-    NavigationCacheMode="Enabled"
+    NavigationCacheMode="Disabled"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Transitions>
         <TransitionCollection>
