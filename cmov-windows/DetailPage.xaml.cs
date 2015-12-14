@@ -119,10 +119,13 @@ namespace BoneStock
             }
 
             Window.Current.SizeChanged += Window_SizeChanged;
-            
-            Reload_Graph();
 
             GraphStartDate.MaxDate = DateTime.Now.AddDays(-1);
+            GraphStartDate.Date = new DateTime(DateTime.Now.Year, 01, 01);
+
+            (LineChart.Series[0] as DataPointSeries).ItemsSource = items;
+
+            LoadGraph(Item);
 
             GraphGroup.SelectionChanged += GraphGroup_SelectionChanged;
             GraphStartDate.DateChanged += GraphStartDate_DateChanged;
@@ -153,32 +156,27 @@ namespace BoneStock
             OnBackRequested();
         }
 
-        private async Task Reload_Graph()
+        private async Task LoadGraph(StockViewModel item)
         {
-            if (GraphStartDate.Date == null)
-            {
-                items = new ObservableCollection<Stock>(await StocksDataSource.getGraph(
-                    Item.Tick, new DateTime(DateTime.Now.Year, 01, 01),
-                    (GraphGroup.SelectedItem as ComboBoxItem).Tag.ToString()[0]));
-            }
-            else
-            {
-                items = new ObservableCollection<Stock>(await StocksDataSource.getGraph(
-                    Item.Tick, GraphStartDate.Date.GetValueOrDefault().LocalDateTime,
-                    (GraphGroup.SelectedItem as ComboBoxItem).Tag.ToString()[0]));
-            }
-            
+            LineChart.Visibility = Visibility.Collapsed;
+
+            items = new ObservableCollection<Stock>(await StocksDataSource.getGraph(
+                item.Tick, GraphStartDate.Date.GetValueOrDefault().LocalDateTime,
+                (GraphGroup.SelectedItem as ComboBoxItem).Tag.ToString()[0]));
+
             (LineChart.Series[0] as DataPointSeries).ItemsSource = items;
+
+            LineChart.Visibility = Visibility.Visible;
         }
 
         private async void GraphStartDate_DateChanged(CalendarDatePicker sender, CalendarDatePickerDateChangedEventArgs args)
         {
-            await Reload_Graph();
+            await LoadGraph(Item);
         }
 
         private async void GraphGroup_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            await Reload_Graph();
+            await LoadGraph(Item);
         }
     }
 }

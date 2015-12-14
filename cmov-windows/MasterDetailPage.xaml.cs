@@ -23,12 +23,22 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
+using WinRTXamlToolkit.Controls.DataVisualization.Charting;
 
 namespace BoneStock
 {
     public sealed partial class MasterDetailPage : Page
     {
         private StockViewModel _lastSelectedItem;
+
+        private DataPointSeries series;
+        private Chart chart;
+
+        private CalendarDatePicker GraphStartDate;
+
+        private ComboBox GraphGroup;
+
+        public ObservableCollection<Stock> items;
 
         public MasterDetailPage()
         {
@@ -54,7 +64,7 @@ namespace BoneStock
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-
+            
             var items = MasterListView.ItemsSource as ObservableCollection<StockViewModel>;
 
             //refresh on all navigations
@@ -100,11 +110,26 @@ namespace BoneStock
             }
         }
 
-        private void MasterListView_ItemClick(object sender, ItemClickEventArgs e)
+        private async Task LoadGraph(StockViewModel item)
+        {
+            chart.Visibility = Visibility.Collapsed;
+
+            items = new ObservableCollection<Stock>(await StocksDataSource.getGraph(
+                item.Tick, GraphStartDate.Date.GetValueOrDefault().LocalDateTime,
+                (GraphGroup.SelectedItem as ComboBoxItem).Tag.ToString()[0]));
+
+            series.ItemsSource = items;
+
+            chart.Visibility = Visibility.Visible;
+        }
+
+        private async void MasterListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var clickedItem = (StockViewModel)e.ClickedItem;
+            if(_lastSelectedItem != clickedItem || _lastSelectedItem == null)
+                LoadGraph(clickedItem);
             _lastSelectedItem = clickedItem;
-
+        
             if (AdaptiveStates.CurrentState == NarrowState)
             {
                 // Use "drill in" transition for navigating from master list to detail view
@@ -117,10 +142,48 @@ namespace BoneStock
             }
         }
 
+        T FindFirstChild<T>(FrameworkElement element) where T : FrameworkElement
+        {
+            int childrenCount = VisualTreeHelper.GetChildrenCount(element);
+            var children = new FrameworkElement[childrenCount];
+
+            for (int i = 0; i < childrenCount; i++)
+            {
+                var child = VisualTreeHelper.GetChild(element, i) as FrameworkElement;
+                children[i] = child;
+                if (child is T)
+                    return (T)child;
+            }
+
+            for (int i = 0; i < childrenCount; i++)
+                if (children[i] != null)
+                {
+                    var subChild = FindFirstChild<T>(children[i]);
+                    if (subChild != null)
+                        return subChild;
+                }
+
+            return null;
+        }
+
         private void LayoutRoot_Loaded(object sender, RoutedEventArgs e)
         {
             // Assure we are displaying the correct item. This is necessary in certain adaptive cases.
             MasterListView.SelectedItem = _lastSelectedItem;
+
+            series = FindFirstChild<LineSeries>(DetailContentPresenter);
+            series.ItemsSource = items;
+
+            chart = FindFirstChild<Chart>(DetailContentPresenter);
+
+            GraphStartDate = FindFirstChild<CalendarDatePicker>(DetailContentPresenter);
+            GraphGroup = FindFirstChild<ComboBox>(DetailContentPresenter);
+
+            GraphStartDate.MaxDate = DateTime.Now.AddDays(-1);
+            GraphStartDate.Date = new DateTime(DateTime.Now.Year, 01, 01);
+
+            GraphGroup.SelectionChanged += GraphGroup_SelectionChanged;
+            GraphStartDate.DateChanged += GraphStartDate_DateChanged;
         }
 
         private void EnableContentTransitions()
@@ -190,6 +253,16 @@ namespace BoneStock
             }
             items.Remove(item);
             _lastSelectedItem = null;
+        }
+
+        private async void GraphStartDate_DateChanged(CalendarDatePicker sender, CalendarDatePickerDateChangedEventArgs args)
+        {
+            await LoadGraph(_lastSelectedItem);
+        }
+
+        private async void GraphGroup_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            await LoadGraph(_lastSelectedItem);
         }
     }
 }

@@ -39,13 +39,15 @@
 
         <CalendarDatePicker x:Name="GraphStartDate" Margin="8,0" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right"/>
         <TextBlock
-			Margin="12,8"
+			Margin="8,8"
             Grid.Row="1"
 			HorizontalAlignment="Left"
 			MaxWidth="560"
 			Style="{ThemeResource BodyTextBlockStyle}"
-			Text="{x:Bind Item.Value, Mode=OneWay}"
-			EntranceNavigationTransitionInfo.IsTargetElement="True" />
+			EntranceNavigationTransitionInfo.IsTargetElement="True">
+			<Run Text="{x:Bind Item.Value, Mode=OneWay}"/>
+            <Run Text="USD"/>
+        </TextBlock>
         <ComboBox Margin="8,8" x:Name="GraphGroup" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right">
             <ComboBoxItem Tag="d">Day</ComboBoxItem>
             <ComboBoxItem Tag="w" IsSelected="True">Week</ComboBoxItem>
